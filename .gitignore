@@ -1,0 +1,77 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Data
+data/raw/
+data/processed/
+*.tsv
+*.vec
+*.parquet
+
+# Models
+/models/
+*.pkl
+*.joblib
+*.bin
+
+# Logs
+logs/
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Cache
+.cache/
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Environment Variables
+.env
+
+# Parquet files
+*.parquet
+editorial-intelligence-engine/
+# newsrec pipeline outputs / local state
+data/
+artifacts/
+MINDlarge*/
+MINDsmall*/
+*.db
+*.db-shm
+*.db-wal
+*.npz
+.smoke/
+.mypy_cache/
+.ruff_cache/

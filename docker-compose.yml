@@ -1,0 +1,42 @@
+# docker compose up -d redis api                      # needs ./artifacts + ./data/newsrec.db (see README)
+# docker compose --profile demo run --rm bootstrap    # builds a SYNTHETIC demo artifact + catalogue first
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "60", "1", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    ports: ["6379:6379"]
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    env_file: [.env.example]
+    environment:
+      NEWSREC_REDIS_URL: redis://redis:6379/0
+      NEWSREC_ARTIFACTS_DIR: /srv/artifacts
+      NEWSREC_DATABASE_URL: sqlite:////srv/data/newsrec.db
+    ports: ["8000:8000"]
+    volumes:
+      - ./artifacts:/srv/artifacts:ro
+      - ./data:/srv/data
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # SYNTHETIC demo bootstrap (hashing test encoder; no MiniLM in the image). Writes ./artifacts and ./data.
+  bootstrap:
+    build: .
+    profiles: ["demo"]
+    user: "0:0"
+    command: ["python", "-m", "newsrec", "demo", "--workdir", "/srv/data/demo", "--artifacts", "/srv/artifacts",
+              "--database-url", "sqlite:////srv/data/newsrec.db", "--backend", "hashing"]
+    volumes:
+      - ./artifacts:/srv/artifacts
+      - ./data:/srv/data
+
+volumes:
+  redis-data:
